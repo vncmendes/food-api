@@ -1,0 +1,41 @@
+{
+  "name": "bun-react-template",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.tsx",
+  "module": "src/index.tsx",
+  "scripts": {
+    "dev": "bun --watch src/http/server.ts",
+    "build": "bun build src/http/server.ts --target bun --outdir ./dist",
+    "start": "NODE_ENV=production bun dist/index.js",
+    "test": "bun test",
+    "generate": "drizzle-kit generate",
+    "migrate": "bun src/database/migrate.ts",
+    "seeds": "bun src/database/seeds.ts",
+    "lint": "eslint --fix src --ext ts",
+    "studio": "nohup bun x drizzle-kit studio > drizzle.log 2>&1 &"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.42.0",
+    "elysia": "^1.2.25",
+    "postgres": "^3.4.5",
+    "react": "^19",
+    "react-dom": "^19",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "@faker-js/faker": "^9.7.0",
+    "@types/bun": "^1.2.10",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "chalk": "^5.4.1",
+    "drizzle-kit": "^0.31.0",
+    "eslint": "^9.25.1",
+    "globals": "^16.0.0",
+    "typescript-eslint": "^8.31.0"
+  }
+}

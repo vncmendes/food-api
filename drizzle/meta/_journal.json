@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1745452860143,
+      "tag": "0000_wakeful_bushwacker",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1745454842555,
+      "tag": "0001_fine_doctor_doom",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745454962395,
+      "tag": "0002_military_the_initiative",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1745456194399,
+      "tag": "0003_slippery_jamie_braddock",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1745522313830,
+      "tag": "0004_complex_madripoor",
+      "breakpoints": true
+    }
+  ]
+}
