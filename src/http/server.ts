@@ -14,6 +14,22 @@ const app = new Elysia()
     return new Response("Hello World !");
   })
 
+  .get("/me", async ({ userAuthenticated }) => { 
+    console.log("entrei");
+    
+    const { userId } = await userAuthenticated();
+    console.log(userId);
+
+    const [userInfo] = await database.select().from(users).where(eq(users.id, userId));
+    console.log(userInfo);
+
+    if (!userInfo) {
+      throw new Error("User not found !");
+    }
+
+    return userInfo;
+  })
+
   .post("/users", () => {})
 
   .post("/authenticate", async ({ body }) => {
@@ -42,7 +58,7 @@ const app = new Elysia()
     })
   })
 
-  .get("/auth-links/authenticate", async ({ query, jwt, cookie: { auth }}) => {
+  .get("/auth-links/authenticate", async ({ query, signUser }) => {
     const { code, redirect } = query;
 
     const [authLinkFromCode] = await database.select().from(authLinks).where(eq(authLinks.code, code));
@@ -58,7 +74,7 @@ const app = new Elysia()
     );
 
     if (daysSinceAuthLinkWasCreated > 7) {
-      throw new Error("Auth Token Expired !, Try again");
+      throw new Error("Authorization Token Expired. Please, generate a new one !");
     }
 
     const [managerRestaurant] = await database.select()
@@ -66,25 +82,24 @@ const app = new Elysia()
       .where(eq(restaurants.managerId, authLinkFromCode.userId)
     );
 
-    const token = await jwt.sign({
+    await signUser({
       sub: authLinkFromCode.userId,
       restaurantId: managerRestaurant?.id
     });
 
-    auth.value = token;
-    auth.httpOnly = true;
-    auth.maxAge = 60 * 60 * 24 * 7; // 7 dias
-    auth.path = "/";
-
     await database.delete(authLinks).where(eq(authLinks.code, code));
 
-    return redirect;
     // set.redirect = redirect; deprecated !!!
+    return redirect;
   }, {
     query: t.Object({
       code: t.String(),
       redirect: t.String()
     })
+  })
+
+  .get("/sign-out", async ({signOut}) => {
+    signOut();
   })
 
 	.post("/restaurants", async ({ body, set }) => {
