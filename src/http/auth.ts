@@ -43,6 +43,19 @@ export const auth = new Elysia()
         userId: payload.sub,
         restaurantId: payload.restaurantId
        };
+      },
+
+      managerRestaurant: async () => {
+       const payload = await jwt.verify(auth.value);
+
+       if (!payload) {
+        throw new Error("Sorry, restaurant not found !");
+       }
+
+       return {
+        userId: payload.sub,
+        restaurantId: payload.restaurantId
+       };
       }
     };
   });

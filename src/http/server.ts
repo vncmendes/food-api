@@ -14,23 +14,7 @@ const app = new Elysia()
     return new Response("Hello World !");
   })
 
-  .get("/me", async ({ userAuthenticated }) => { 
-    console.log("entrei");
-    
-    const { userId } = await userAuthenticated();
-    console.log(userId);
-
-    const [userInfo] = await database.select().from(users).where(eq(users.id, userId));
-    console.log(userInfo);
-
-    if (!userInfo) {
-      throw new Error("User not found !");
-    }
-
-    return userInfo;
-  })
-
-  .post("/users", () => {})
+  // .post("/users", () => {})
 
   .post("/authenticate", async ({ body }) => {
     const { email } = body;
@@ -98,8 +82,24 @@ const app = new Elysia()
     })
   })
 
-  .get("/sign-out", async ({signOut}) => {
-    signOut();
+  .get("/me", async ({ userAuthenticated }) => { 
+    console.log("entrei");
+    
+    const { userId } = await userAuthenticated();
+    console.log(userId);
+
+    const [userInfo] = await database.select().from(users).where(eq(users.id, userId));
+    console.log(userInfo);
+
+    if (!userInfo) {
+      throw new Error("User not found !");
+    }
+
+    return userInfo;
+  })
+
+  .get("/sign-out", async ({signOut: fromDeriveSignOut}) => {
+    fromDeriveSignOut();
   })
 
 	.post("/restaurants", async ({ body, set }) => {
@@ -129,6 +129,26 @@ const app = new Elysia()
       phone: t.String()
     })
     // [t] from Elysia is the same of [d] from zod
+  })
+
+  .get("/managed-restaurant", async ({ managerRestaurant }) => { 
+    console.log("entrei no rest");
+    
+    const { restaurantId } = await managerRestaurant();
+    console.log(restaurantId);
+
+    if (!restaurantId) {
+      throw new Error("This user does not manage any restaurant !");
+    }
+
+    const [restarantInfo] = await database.select().from(restaurants).where(eq(restaurants.id, restaurantId));
+    console.log(restarantInfo);
+
+    if (!restarantInfo) {
+      throw new Error("Restaurant not found !");
+    }
+
+    return restarantInfo;
   });
 
   app.listen(3333, () => {
