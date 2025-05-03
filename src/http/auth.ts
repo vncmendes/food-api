@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { UnauthorizedErro } from "@/errors/unauthorized-error";
 import cookie from "@elysiajs/cookie";
 import jwt from "@elysiajs/jwt";
 import { Elysia,  Static,  t } from "elysia";
@@ -9,6 +10,25 @@ const jwtPayload = t.Object({
 });
 
 export const auth = new Elysia()
+  .error({
+    UNAUTHORIZED: UnauthorizedErro
+  }).onError(({ code, error, set }) => {
+    switch (code) {
+      case "UNAUTHORIZED": {
+        set.status = 401;
+        return { code, message: error.message }; 
+      }
+      case "VALIDATION": {
+        set.status = 400;
+        return { code, message: error.message};
+      }
+      default: {
+        console.error(error);
+        return new Response(null, { status: 500 });
+      }
+
+    }
+  })
   .use(
     jwt({
       secret: env.JWT_SECRET_KEY,
@@ -36,7 +56,7 @@ export const auth = new Elysia()
        const payload = await jwt.verify(auth.value);
 
        if (!payload) {
-        throw new Error("Unauthorized !");
+        throw new UnauthorizedErro;
        }
 
        return {

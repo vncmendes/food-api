@@ -1,11 +1,14 @@
 import { restaurants, users, authLinks } from "@/database/schema";
-import { database } from "@/database/seedsConnection";
+import { database } from "@/database/seeds-connection";
 import { env } from "@/env";
 import { createId } from "@paralleldrive/cuid2";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { auth } from "./auth";
+import { UnauthorizedErro } from "@/errors/unauthorized-error";
+import { ValidationError } from "@/errors/validation-error";
+
 
 const app = new Elysia()
   .use(auth)
@@ -21,7 +24,7 @@ const app = new Elysia()
     const [userExists] = await database.select().from(users).where(eq(users.email, email));
     
     if (!userExists) {
-      throw new Error("User not found !");
+      throw new ValidationError;
     }
     const authLinkCode = createId();
     
@@ -49,7 +52,7 @@ const app = new Elysia()
     // const authLinkFromCode = await database.query.authLinks.findFirst({where(fields, { eq }) { return eq(fields.code, code); }, });
 
     if (!authLinkFromCode) {
-      throw new Error("Unauthorized !");
+      throw new UnauthorizedErro;
     }
 
     const daysSinceAuthLinkWasCreated = dayjs().diff(
@@ -92,7 +95,7 @@ const app = new Elysia()
     console.log(userInfo);
 
     if (!userInfo) {
-      throw new Error("User not found !");
+      throw new ValidationError;
     }
 
     return userInfo;
